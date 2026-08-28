@@ -1,253 +1,333 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { IoMdClose } from "react-icons/io";
-
-const initialForm = {
-  desc: "",
-  filesize: "",
-  close: false,
-  tagEnabled: true,
-  tagTitle: "Download Now",
-  tagColor: "green",
-};
+import { motion, AnimatePresence } from "framer-motion";
 
 function AddCardModal({ isOpen, onClose, onSave }) {
-  const [form, setForm] = useState(initialForm);
-
-  const handleChange = (field, value) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
+  const [description, setDescription] = useState("");
+  const [fileSize, setFileSize] = useState("");
+  const [action, setAction] = useState("download");
+  const [showTag, setShowTag] = useState(true);
+  const [tagTitle, setTagTitle] = useState("Download Now");
+  const [tagColor, setTagColor] = useState("green");
 
   const handleSave = () => {
-    if (!form.desc.trim() || !form.filesize.trim()) return;
+    if (!description.trim()) {
+      alert("Please enter a description");
+      return;
+    }
 
-    onSave({
-      desc: form.desc.trim(),
-      filesize: form.filesize.trim(),
-      close: form.close,
+    const newCard = {
+      title: description.substring(0, 30),
+      desc: description,
+      filesize: fileSize,
+      close: action === "close",
+
       tag: {
-        isopen: form.tagEnabled,
-        tagTitle: form.tagTitle.trim() || "Download Now",
-        tagColor: form.tagColor,
+        isopen: showTag,
+        tagTitle: tagTitle,
+        tagColor: tagColor,
       },
-    });
 
-    setForm(initialForm);
-  };
+      xPosition: 100,
+      yPosition: 100,
+    };
 
-  const handleClose = () => {
-    setForm(initialForm);
-    onClose();
+    onSave(newCard);
+
+    // Reset form
+    setDescription("");
+    setFileSize("");
+    setAction("download");
+    setShowTag(true);
+    setTagTitle("Download Now");
+    setTagColor("green");
   };
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[50] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
-          onClick={handleClose}
-        >
+        <>
+          {/* Background */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 20 }}
-            transition={{ type: "spring", stiffness: 260, damping: 24 }}
-            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onClose}
             className="
-              relative w-full max-w-[380px]
+              fixed inset-0 z-[50]
+              bg-black/70
+              backdrop-blur-sm
+            "
+          />
+
+          {/* Modal */}
+          <motion.div
+            initial={{
+              opacity: 0,
+              scale: 0.95,
+              y: 20,
+            }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              y: 0,
+            }}
+            exit={{
+              opacity: 0,
+              scale: 0.95,
+              y: 20,
+            }}
+            className="
+              fixed
+              left-1/2
+              top-1/2
+              z-[60]
+              w-[440px]
+              max-w-[calc(100vw-32px)]
+              -translate-x-1/2
+              -translate-y-1/2
               rounded-2xl
-              bg-gradient-to-br from-zinc-800/95 to-zinc-900/95
-              backdrop-blur-md
               border border-white/10
-              shadow-2xl
+              bg-gradient-to-br
+              from-zinc-800
+              to-zinc-900
+              p-7
               text-white
-              p-6
+              shadow-2xl
             "
           >
-            {/* Close button */}
-            <button
-              onClick={handleClose}
-              className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
-            >
-              <IoMdClose className="text-[16px]" />
-            </button>
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">
+                Add New Card
+              </h2>
 
-            <h2 className="text-[18px] font-semibold mb-5">Add New Card</h2>
-
-            <div className="flex flex-col gap-4">
-              {/* Description */}
-              <div>
-                <label className="block text-[12px] font-medium text-zinc-400 mb-1.5">
-                  Description
-                </label>
-                <textarea
-                  value={form.desc}
-                  onChange={(e) => handleChange("desc", e.target.value)}
-                  rows={3}
-                  placeholder="Enter card description"
-                  className="
-                    w-full resize-none rounded-lg
-                    bg-white/5 border border-white/10
-                    px-3 py-2 text-[13px]
-                    text-white placeholder-zinc-500
-                    focus:outline-none focus:border-blue-500/60
-                  "
-                />
-              </div>
-
-              {/* File size */}
-              <div>
-                <label className="block text-[12px] font-medium text-zinc-400 mb-1.5">
-                  File Size
-                </label>
-                <input
-                  type="text"
-                  value={form.filesize}
-                  onChange={(e) => handleChange("filesize", e.target.value)}
-                  placeholder="e.g. 1.2 MB"
-                  className="
-                    w-full rounded-lg
-                    bg-white/5 border border-white/10
-                    px-3 py-2 text-[13px]
-                    text-white placeholder-zinc-500
-                    focus:outline-none focus:border-blue-500/60
-                  "
-                />
-              </div>
-
-              {/* Icon type */}
-              <div>
-                <label className="block text-[12px] font-medium text-zinc-400 mb-1.5">
-                  Action Icon
-                </label>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleChange("close", false)}
-                    className={`flex-1 rounded-lg px-3 py-2 text-[12px] font-medium border transition-colors ${
-                      !form.close
-                        ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
-                        : "bg-white/5 border-white/10 text-zinc-400"
-                    }`}
-                  >
-                    Download
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleChange("close", true)}
-                    className={`flex-1 rounded-lg px-3 py-2 text-[12px] font-medium border transition-colors ${
-                      form.close
-                        ? "bg-red-500/20 border-red-500/50 text-red-300"
-                        : "bg-white/5 border-white/10 text-zinc-400"
-                    }`}
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-
-              {/* Tag toggle */}
-              <div className="flex items-center justify-between">
-                <label className="text-[12px] font-medium text-zinc-400">
-                  Show Bottom Tag
-                </label>
-                <button
-                  type="button"
-                  onClick={() => handleChange("tagEnabled", !form.tagEnabled)}
-                  className={`relative h-6 w-11 rounded-full transition-colors ${
-                    form.tagEnabled ? "bg-blue-500" : "bg-white/10"
-                  }`}
-                >
-                  <span
-                    className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
-                      form.tagEnabled ? "translate-x-5" : "translate-x-0.5"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              {/* Tag details */}
-              {form.tagEnabled && (
-                <>
-                  <div>
-                    <label className="block text-[12px] font-medium text-zinc-400 mb-1.5">
-                      Tag Title
-                    </label>
-                    <input
-                      type="text"
-                      value={form.tagTitle}
-                      onChange={(e) => handleChange("tagTitle", e.target.value)}
-                      placeholder="e.g. Download Now"
-                      className="
-                        w-full rounded-lg
-                        bg-white/5 border border-white/10
-                        px-3 py-2 text-[13px]
-                        text-white placeholder-zinc-500
-                        focus:outline-none focus:border-blue-500/60
-                      "
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-[12px] font-medium text-zinc-400 mb-1.5">
-                      Tag Color
-                    </label>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleChange("tagColor", "green")}
-                        className={`flex-1 rounded-lg px-3 py-2 text-[12px] font-medium border transition-colors ${
-                          form.tagColor === "green"
-                            ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-300"
-                            : "bg-white/5 border-white/10 text-zinc-400"
-                        }`}
-                      >
-                        Green
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleChange("tagColor", "blue")}
-                        className={`flex-1 rounded-lg px-3 py-2 text-[12px] font-medium border transition-colors ${
-                          form.tagColor === "blue"
-                            ? "bg-blue-500/20 border-blue-500/50 text-blue-300"
-                            : "bg-white/5 border-white/10 text-zinc-400"
-                        }`}
-                      >
-                        Blue
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
+              <button
+                onClick={onClose}
+                className="
+                  flex h-10 w-10
+                  items-center justify-center
+                  rounded-full
+                  bg-white/5
+                  hover:bg-white/10
+                "
+              >
+                <IoMdClose className="text-xl" />
+              </button>
             </div>
 
-            {/* Actions */}
-            <div className="flex gap-3 mt-6">
+            {/* Description */}
+            <div className="mt-6">
+              <label className="text-xs text-zinc-400">
+                Description
+              </label>
+
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Enter card description"
+                rows={4}
+                className="
+                  mt-2 w-full resize-none
+                  rounded-xl
+                  border border-white/10
+                  bg-zinc-800/70
+                  px-4 py-3
+                  text-sm text-white
+                  outline-none
+                  placeholder:text-zinc-500
+                  focus:border-blue-500
+                "
+              />
+            </div>
+
+            {/* File Size */}
+            <div className="mt-5">
+              <label className="text-xs text-zinc-400">
+                File Size
+              </label>
+
+              <input
+                type="text"
+                value={fileSize}
+                onChange={(e) => setFileSize(e.target.value)}
+                placeholder="e.g. 1.2 MB"
+                className="
+                  mt-2 w-full
+                  rounded-xl
+                  border border-white/10
+                  bg-zinc-800/70
+                  px-4 py-3
+                  text-sm text-white
+                  outline-none
+                  placeholder:text-zinc-500
+                  focus:border-blue-500
+                "
+              />
+            </div>
+
+            {/* Action */}
+            <div className="mt-5">
+              <label className="text-xs text-zinc-400">
+                Action Icon
+              </label>
+
+              <div className="mt-2 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setAction("download")}
+                  className={`
+                    rounded-xl border px-4 py-3 text-sm
+                    ${
+                      action === "download"
+                        ? "border-emerald-500 bg-emerald-500/20 text-emerald-300"
+                        : "border-white/10 bg-zinc-800 text-zinc-400"
+                    }
+                  `}
+                >
+                  Download
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setAction("close")}
+                  className={`
+                    rounded-xl border px-4 py-3 text-sm
+                    ${
+                      action === "close"
+                        ? "border-red-500 bg-red-500/20 text-red-300"
+                        : "border-white/10 bg-zinc-800 text-zinc-400"
+                    }
+                  `}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+
+            {/* Show Tag */}
+            <div className="mt-5 flex items-center justify-between">
+              <label className="text-xs text-zinc-400">
+                Show Bottom Tag
+              </label>
+
               <button
-                onClick={handleClose}
-                className="flex-1 rounded-lg py-2.5 text-[13px] font-medium bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+                type="button"
+                onClick={() => setShowTag(!showTag)}
+                className={`
+                  relative h-7 w-14 rounded-full
+                  ${showTag ? "bg-blue-500" : "bg-zinc-700"}
+                `}
+              >
+                <span
+                  className={`
+                    absolute top-1 h-5 w-5
+                    rounded-full bg-white
+                    transition-all
+                    ${showTag ? "left-8" : "left-1"}
+                  `}
+                />
+              </button>
+            </div>
+
+            {/* Tag Title */}
+            <div className="mt-5">
+              <label className="text-xs text-zinc-400">
+                Tag Title
+              </label>
+
+              <input
+                type="text"
+                value={tagTitle}
+                disabled={!showTag}
+                onChange={(e) => setTagTitle(e.target.value)}
+                className="
+                  mt-2 w-full
+                  rounded-xl
+                  border border-white/10
+                  bg-zinc-800/70
+                  px-4 py-3
+                  text-sm text-white
+                  outline-none
+                  disabled:opacity-40
+                "
+              />
+            </div>
+
+            {/* Tag Color */}
+            <div className="mt-5">
+              <label className="text-xs text-zinc-400">
+                Tag Color
+              </label>
+
+              <div className="mt-2 grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  disabled={!showTag}
+                  onClick={() => setTagColor("green")}
+                  className={`
+                    rounded-xl border px-4 py-3 text-sm
+                    ${
+                      tagColor === "green"
+                        ? "border-emerald-500 bg-emerald-500/20 text-emerald-300"
+                        : "border-white/10 bg-zinc-800 text-zinc-400"
+                    }
+                  `}
+                >
+                  Green
+                </button>
+
+                <button
+                  type="button"
+                  disabled={!showTag}
+                  onClick={() => setTagColor("blue")}
+                  className={`
+                    rounded-xl border px-4 py-3 text-sm
+                    ${
+                      tagColor === "blue"
+                        ? "border-blue-500 bg-blue-500/20 text-blue-300"
+                        : "border-white/10 bg-zinc-800 text-zinc-400"
+                    }
+                  `}
+                >
+                  Blue
+                </button>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="mt-7 grid grid-cols-2 gap-3">
+              <button
+                onClick={onClose}
+                className="
+                  rounded-xl
+                  border border-white/10
+                  bg-zinc-800
+                  px-4 py-3
+                  text-sm
+                  hover:bg-zinc-700
+                "
               >
                 Cancel
               </button>
+
               <button
                 onClick={handleSave}
-                disabled={!form.desc.trim() || !form.filesize.trim()}
                 className="
-                  flex-1 rounded-lg py-2.5 text-[13px] font-semibold
-                  bg-gradient-to-r from-blue-500 to-blue-600
-                  hover:from-blue-400 hover:to-blue-500
-                  disabled:opacity-40 disabled:cursor-not-allowed
-                  transition-all
+                  rounded-xl
+                  bg-gradient-to-r
+                  from-blue-500 to-blue-600
+                  px-4 py-3
+                  text-sm font-medium
+                  hover:from-blue-400
+                  hover:to-blue-500
                 "
               >
                 Save
               </button>
             </div>
           </motion.div>
-        </motion.div>
+        </>
       )}
     </AnimatePresence>
   );

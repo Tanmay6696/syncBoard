@@ -4,19 +4,20 @@ function Background() {
   return (
     <div className="fixed inset-0 z-[2] w-full h-screen pointer-events-none bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950">
       {/* Animated grid pattern */}
-      <div 
+      <div
         className="absolute inset-0 opacity-5"
         style={{
           backgroundImage: `
             linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)
           `,
-          backgroundSize: '50px 50px'
+          backgroundSize: "50px 50px",
         }}
       />
-      
+
       {/* Glowing orb */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-blue-500/5 blur-3xl" />
+
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full bg-purple-500/5 blur-3xl" />
 
       <div className="absolute top-[5%] w-full text-center">
