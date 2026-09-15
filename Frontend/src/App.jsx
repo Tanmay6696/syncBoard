@@ -8,7 +8,7 @@ import {
 
 import Background from "./components/background";
 import Foreground from "./components/foreground";
-
+import Documents from "./pages/Documents";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -121,7 +121,7 @@ function App() {
                 element={
                     user ? (
 
-                        <DocumentsPage
+                        <Documents
                             user={user}
                             setUser={setUser}
                         />

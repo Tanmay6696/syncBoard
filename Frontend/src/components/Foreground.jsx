@@ -1,97 +1,86 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import Cards from "./Cards";
 import AddMenu from "./AddMenu";
-import AddWorkspace from "./AddWorkspace";
 import AddProjectModal from "./AddProjectModal";
 import AddCardModal from "./AddCardModal";
 import AddWorkspaceModal from "./AddWorkspaceModal";
-import { getDocuments, createDocument, updateDocumentPosition, deleteDocument } from "../api/documentApi";
-import { getWorkspaces, createWorkspace } from "../api/workspaceApi";
-import { getProjects, createProject } from "../api/projectApi";
-function mapDoc(doc) {
-  return {
-    id: doc.documentId,
-    title: doc.title,
-    desc: doc.content,
-    dueDate: doc.dueDate,
-    filesize: doc.filesize || "",
-    close: doc.close || false,
-    xPosition: doc.xPosition ?? 100,
-    yPosition: doc.yPosition ?? 100,
-    tag: {
-      isopen: true,
-      tagTitle: doc.tagTitle || "To Do",
-      tagColor: doc.tagColor || "blue",
-    },
-  };
-}
-function Foreground({ user }) {
+import { createDocument } from "../api/documentApi";
+import { createWorkspace } from "../api/workspaceApi";
+import { createProject } from "../api/projectApi";
+
+function Foreground({
+  user,
+  workspaces,
+  projects,
+  activeProjectId,
+  onWorkspaceCreated,
+  onProjectCreated,
+  onTaskCreated,
+}) {
   const ref = useRef(null);
-  const [activeModal, setActiveModal] = useState(null); // 'workspace' | 'project' | 'task' | null
+  const [activeModal, setActiveModal] = useState(null);
   const [data, setData] = useState([]);
-  const [workspaces, setWorkspaces] = useState([]);
-  const [projects, setProjects] = useState([]);
-  console.log("Active Modal:  ", activeModal, "user: ", user);
 
-  useEffect(() => {
-    // console.log("Foreground user:", user);
-    // if () return;
-
-    // getDocuments(user.userId).then((res) => setData(res.data.map(mapDoc)));
-    // getWorkspaces(user.userId).then((res) => setWorkspaces(res.data));
-    // getProjects(user.userId).then((res) => setProjects(res.data));
-    // getDocuments().then((res) => setData(res.data.map(mapDoc)));
-    getWorkspaces().then((res) => setWorkspaces(res.data));
-    getProjects().then((res) => setProjects(res.data));
-  }, []);
-
-  const handleCreateWorkspace = (payload) => {
+  const handleCreateWorkspace = (payload) =>
     createWorkspace(payload)
       .then((res) => {
-        setWorkspaces((prev) => [...prev, res.data]);
+        onWorkspaceCreated?.(res.data);   // tell Documents to refresh
         setActiveModal(null);
       })
       .catch((err) => console.error("Failed to create workspace:", err));
-  };
 
-  const handleCreateProject = ({ name, workspaceId }) => {
+  const handleCreateProject = ({ name, workspaceId }) =>
     createProject({ name, workspaceId })
       .then((res) => {
-        setProjects((prev) => [...prev, res.data]);
+        onProjectCreated?.(res.data);
         setActiveModal(null);
       })
       .catch((err) => console.error("Failed to create project:", err));
-  };
 
-  const handleSaveCard = (newCard) => {
-    // unchanged, just now newCard.projectId is populated
-    const documentData = { ...newCard, userId: user.userId };
-    createDocument(documentData)
-      .then((response) => {
-        setData((prev) => [...prev, mapDoc(response.data)]);
+  const handleSaveCard = (newCard) =>
+    createDocument({ ...newCard, userId: user?.userId })
+      .then((res) => {
+        setData((prev) => [...prev, res.data]);
+        onTaskCreated?.(res.data);
         setActiveModal(null);
       })
-      .catch((error) => console.error("Failed to create document:", error));
-  };
+      .catch((err) => console.error("Failed to create document:", err));
 
-  // handleDragEnd, handleDelete, handleComplete — unchanged
+  const handleDragEnd = (id, x, y) =>
+    setData((prev) => prev.map((d) => (d.id === id ? { ...d, xPosition: x, yPosition: y } : d)));
+
+  const handleDelete = (id) => setData((prev) => prev.filter((d) => d.id !== id));
+
+  const handleComplete = (id) =>
+    setData((prev) =>
+      prev.map((d) => (d.id === id ? { ...d, tag: { ...d.tag, tagTitle: "Done", tagColor: "green" } } : d))
+    );
 
   return (
     <>
-      <div ref={ref} className="fixed inset-0 z-[3] overflow-hidden" style={{ background: "radial-gradient(circle at center, rgba(30,30,30,0) 0%, rgba(0,0,0,0.3) 100%)" }}>
-        {data.map((item) => (
-          <Cards key={item.id} id={item.id} x={item.xPosition} y={item.yPosition} data={item} reference={ref}
-            onDragEnd={handleDragEnd} onDelete={handleDelete} onComplete={handleComplete} />
-        ))}
-      </div>
+      {/* only mounted when there are cards, and never blocks clicks */}
+      {data.length > 0 && (
+        <div ref={ref} className="pointer-events-none fixed inset-0 z-[3] overflow-hidden">
+          {data.map((item) => (
+            <div key={item.id} className="pointer-events-auto">
+              <Cards
+                id={item.id}
+                x={item.xPosition}
+                y={item.yPosition}
+                data={item}
+                reference={ref}
+                onDragEnd={handleDragEnd}
+                onDelete={handleDelete}
+                onComplete={handleComplete}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       <AddMenu onSelect={setActiveModal} />
 
-      <AddWorkspace
-        isOpen={activeModal === "workspace"}
-        onClose={() => setActiveModal(null)}
-        onSave={handleCreateWorkspace}
-      />
+      {/* AddWorkspace (the inline form) removed — it was rendering unconditionally */}
       <AddWorkspaceModal
         isOpen={activeModal === "workspace"}
         onClose={() => setActiveModal(null)}
@@ -103,12 +92,12 @@ function Foreground({ user }) {
         onSave={handleCreateProject}
         workspaces={workspaces}
       />
-
       <AddCardModal
         isOpen={activeModal === "task"}
         onClose={() => setActiveModal(null)}
         onSave={handleSaveCard}
         projects={projects}
+        defaultProjectId={activeProjectId}
       />
     </>
   );
