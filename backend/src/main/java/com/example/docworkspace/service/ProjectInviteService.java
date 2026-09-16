@@ -23,25 +23,7 @@ import java.util.List;
 @Service
 public class ProjectInviteService {
 
-    // private final ProjectInviteRepository inviteRepository;
-    // private final ProjectMemberRepository memberRepository;
-    // private final ProjectRepository projectRepository;
-    // private final UserRepository userRepository;
-    // private final ProjectAccessService accessService;
-
-    // private final SecureRandom secureRandom = new SecureRandom();
-
-    // public ProjectInviteService(ProjectInviteRepository inviteRepository,
-    //                             ProjectMemberRepository memberRepository,
-    //                             ProjectRepository projectRepository,
-    //                             UserRepository userRepository,
-    //                             ProjectAccessService accessService) {
-    //     this.inviteRepository = inviteRepository;
-    //     this.memberRepository = memberRepository;
-    //     this.projectRepository = projectRepository;
-    //     this.userRepository = userRepository;
-    //     this.accessService = accessService;
-    // }
+    
     @Autowired
     private ProjectInviteRepository inviteRepository;
 

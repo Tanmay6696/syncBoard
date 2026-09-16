@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getWorkspaces } from "../api/workspaceApi";
 import { getProjectsByWorkspace } from "../api/projectApi";
 import { getTasks } from "../api/taskApi";
+import InvitesInbox from "../components/InvitesInbox";
 import MembersPanel from "../components/MembersPanel";
 import Foreground from "../components/foreground";
 
@@ -76,6 +77,8 @@ export default function Documents({ user, setUser }) {
 
   return (
     <div className="min-h-screen w-full bg-zinc-950">
+        <InvitesInbox onChanged={() => { loadWorkspaces(); loadProjects(workspaceId); }} />
+
       <Foreground
         user={user}
         workspaces={workspaces}

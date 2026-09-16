@@ -5,6 +5,8 @@ import com.example.docworkspace.dto.WorkspaceResponse;
 import com.example.docworkspace.security.CurrentUser;
 import com.example.docworkspace.service.WorkspaceService;
 import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,11 +19,10 @@ import java.util.Map;
 @CrossOrigin(origins = "http://localhost:5173")
 public class WorkspaceController {
 
-    private final WorkspaceService workspaceService;
+    @Autowired
+    private WorkspaceService workspaceService;
 
-    public WorkspaceController(WorkspaceService workspaceService) {
-        this.workspaceService = workspaceService;
-    }
+    
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody WorkspaceRequest request) {

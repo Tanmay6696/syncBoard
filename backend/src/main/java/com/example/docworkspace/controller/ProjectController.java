@@ -5,6 +5,8 @@ import com.example.docworkspace.dto.ProjectResponse;
 import com.example.docworkspace.security.CurrentUser;
 import com.example.docworkspace.service.ProjectService;
 import jakarta.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +18,8 @@ import java.util.Map;
 @RequestMapping("/api/projects")
 public class ProjectController {
 
-    private final ProjectService projectService;
-
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
-    }
-
+    @Autowired
+    private ProjectService projectService;
     // CREATE
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody ProjectRequest request) {

@@ -37,7 +37,7 @@ public class WorkspaceService {
 
     @Transactional(readOnly = true)
     public List<WorkspaceResponse> listForOwner(Long ownerId) {
-        return workspaceRepository.findByOwnerIdOrderByCreatedAtDesc(ownerId)
+        return workspaceRepository.findAllByMemberUserId(ownerId)
                 .stream()
                 .map(this::toResponse)
                 .toList();

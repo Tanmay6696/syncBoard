@@ -15,14 +15,20 @@ public class ProjectInvite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
+    /** The invited account (must already exist). */
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    /** Denormalized for display / audit only. */
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 64)
     private String token;
 
     @Enumerated(EnumType.STRING)
@@ -33,7 +39,7 @@ public class ProjectInvite {
     @Column(nullable = false, length = 20)
     private InviteStatus status = InviteStatus.PENDING;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "invited_by", nullable = false)
     private User invitedBy;
 
@@ -43,8 +49,13 @@ public class ProjectInvite {
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
+    @Column(name = "accepted_at")
+    private OffsetDateTime acceptedAt;
+
     @PrePersist
     protected void onCreate() {
-        createdAt = OffsetDateTime.now();
+        if (createdAt == null) createdAt = OffsetDateTime.now();
+        if (expiresAt == null) expiresAt = createdAt.plusDays(7);
+        if (status == null)    status    = InviteStatus.PENDING;
     }
 }

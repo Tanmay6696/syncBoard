@@ -1,13 +1,14 @@
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\controller\AuthController.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\controller\DocumentController.java
+I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\controller\InviteController.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\controller\ProjectController.java
-I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\controller\ProjectInviteController.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\controller\ProjectMemberController.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\controller\WorkspaceController.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\DocWorkspaceApplication.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\dto\AddMemberRequest.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\dto\AuthResponse.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\dto\ChangeRoleRequest.java
+I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\dto\InviteDto.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\dto\InviteResponse.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\dto\LoginRequest.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\dto\LogoutRequest.java
@@ -34,6 +35,7 @@ I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docw
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\entity\TaskTagId.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\entity\User.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\entity\Workspace.java
+I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\entity\WorkspaceMember.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\enums\InviteStatus.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\enums\NotificationType.java
 I:\draggable_docs\react-draggable-docs-ui\Backend\src\main\java\com\example\docworkspace\enums\Role.java

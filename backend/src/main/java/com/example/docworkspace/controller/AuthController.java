@@ -14,6 +14,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import java.time.Duration;
@@ -24,12 +26,11 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
+    
+    @Autowired
+    private AuthService authService;
 
-    private final AuthService authService;
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
+    
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
